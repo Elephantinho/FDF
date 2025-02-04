@@ -1,26 +1,4 @@
-#include <stdlib.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include "get_next_line/get_next_line.h"
-#include "libft/libft.h"
-
-typedef struct s_mat
-{
-	int		**mat;
-	int		x;
-}				t_mat;
-
-void	print_mat_char(char **mat)
-{
-	int		i;
-
-	i = 0;
-	while (mat[i])
-	{
-		printf("%s", mat[i]);
-		i++;
-	}
-}
+#include "fdf.h"
 
 void	free_mat_char(char **mat)
 {
@@ -33,27 +11,6 @@ void	free_mat_char(char **mat)
 		i++;
 	}
 	free(mat);
-}
-
-char	**parsing_old()
-{
-	int		fd;
-	char	*s;
-	char	**mat;
-	int		i;
-
-	i = 0;
-	fd = open("maps/42.fdf", O_RDONLY);
-	mat = malloc(sizeof(char *) * 2);
-	while ((s = get_next_line(fd)))
-	{
-		if (i > 0)
-			mat = realloc(mat, sizeof(char *) * (i + 2));
-		mat[i] = s;
-		i++;
-	}
-	mat[i] = NULL;
-	return (mat);
 }
 
 void	print_mat(t_mat mat)
@@ -109,7 +66,7 @@ void	parsing(t_mat *mat)
 	char	**tmp;
 
 	i = 0;
-	fd = open("maps/42_1space.fdf", O_RDONLY);
+	fd = open("maps/42.fdf", O_RDONLY);
 	mat->mat = malloc(sizeof(char *) * 2);
 	while ((s = get_next_line(fd)))
 	{
@@ -123,6 +80,7 @@ void	parsing(t_mat *mat)
 	mat->mat[i] = NULL;
 }
 
+/*
 int	main()
 {
 	//char	**mat;
@@ -131,3 +89,4 @@ int	main()
 	parsing(&mat);
 	print_mat(mat);
 }
+*/

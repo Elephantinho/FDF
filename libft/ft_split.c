@@ -6,7 +6,7 @@
 /*   By: pdessant <pdessant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 11:58:31 by pdessant          #+#    #+#             */
-/*   Updated: 2024/11/30 09:48:30 by pdessant         ###   ########.fr       */
+/*   Updated: 2025/02/04 17:26:54 by lucasu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 int	charset_checker(char c, char ch)
 {
-	int	i;
-
-	i = 0;
 	if (ch == c)
 		return (1);
 	return (0);
