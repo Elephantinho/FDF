@@ -17,63 +17,24 @@ void	my_mlx_pixel_put(t_image *data, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
-float calculate_scale(t_mat *mat, int width, int height)
-{
-    float map_width = mat->x * mat->display.pixel_size * cos(0.523599) +
-                      mat->y * mat->display.pixel_size * cos(0.523599);
-    float map_height = mat->x * mat->display.pixel_size * sin(0.523599) +
-                       mat->y * mat->display.pixel_size * sin(0.523599);
-
-    float scale_x = width / map_width;
-    float scale_y = height / map_height;
-
-    return fmin(scale_x, scale_y); // Usa il valore più piccolo per adattare tutto
-}
-
-
-
-void scale_and_center(int *x, int *y, t_mat *mat, float scale, int width, int height)
-{
-    *x *= scale;
-    *y *= scale;
-
-    int map_width = (mat->x * mat->display.pixel_size * cos(0.523599) +
-                     mat->y * mat->display.pixel_size * cos(0.523599)) * scale;
-    int map_height = (mat->x * mat->display.pixel_size * sin(0.523599) +
-                      mat->y * mat->display.pixel_size * sin(0.523599)) * scale;
-
-    int offset_x = (width - map_width) / 2;
-    int offset_y = (height - map_height) / 2;
-
-    *x += offset_x;
-    *y += offset_y;
-}
-
-
-
-
-void iso_projection(int *x, int *y, int z)
-{
-    int prev_x = *x;
-    int prev_y = *y;
-
-    // Applica la proiezione isometrica
-    *x = (prev_x - prev_y) * cos(0.523599);  // 0.523599 radianti = 30 gradi
-    *y = ((prev_x + prev_y) * sin(0.523599)) - z;
-}
-
-void	draw_line(t_image *img, int x1, int y1, int x2, int y2, int color)
+void draw_line(t_image *img, int x1, int y1, int x2, int y2, int color)
 {
 	int dx = abs(x2 - x1);
 	int dy = abs(y2 - y1);
-	int sx = (x1 < x2) ? 1 : -1;
-	int sy = (y1 < y2) ? 1 : -1;
+	int sx = (x1 < x2) ? 1 : -1; // Direzione x
+	int sy = (y1 < y2) ? 1 : -1; // Direzione y
 	int err = dx - dy;
 
-	while (x1 != x2 || y1 != y2)
+	while (1)
 	{
+		// Disegna il punto
 		my_mlx_pixel_put(img, x1, y1, color);
-		int e2 = 2 * err;
+
+		// Se siamo arrivati al punto di destinazione, usciamo
+		if (x1 == x2 && y1 == y2)
+			break;
+
+		int e2 = err * 2;
 		if (e2 > -dy)
 		{
 			err -= dy;
@@ -87,105 +48,103 @@ void	draw_line(t_image *img, int x1, int y1, int x2, int y2, int color)
 	}
 }
 
-void create_image(t_mat *mat, t_image *img)
+void iso_projection(int *x, int *y, int z)
 {
-    float scale = calculate_scale(mat, mat->display.width, mat->display.height);
+	int prev_x = *x;
+	int prev_y = *y;
 
-    int i = 0;
-    while (mat->mat[i])
-    {
-        int j = 0;
-        while (j < mat->x)
-        {
-            int x = j * mat->display.pixel_size;
-            int y = i * mat->display.pixel_size;
-            int z = mat->mat[i][j];
-
-            // Scala e centra le coordinate
-            scale_and_center(&x, &y, mat, scale, mat->display.width, mat->display.height);
-
-            // Applica la proiezione isometrica
-            iso_projection(&x, &y, z);
-
-            // Disegna il punto
-            my_mlx_pixel_put(img, x, y, 0x00FFFFFF);
-
-            // Collega con il punto a destra
-            if (j + 1 < mat->x)
-            {
-                int x2 = (j + 1) * mat->display.pixel_size;
-                int y2 = i * mat->display.pixel_size;
-                int z2 = mat->mat[i][j + 1];
-
-                scale_and_center(&x2, &y2, mat, scale, mat->display.width, mat->display.height);
-                iso_projection(&x2, &y2, z2);
-
-                draw_line(img, x, y, x2, y2, 0x00FFFFFF);
-            }
-
-            // Collega con il punto in basso
-            if (mat->mat[i + 1])
-            {
-                int x3 = j * mat->display.pixel_size;
-                int y3 = (i + 1) * mat->display.pixel_size;
-                int z3 = mat->mat[i + 1][j];
-
-                scale_and_center(&x3, &y3, mat, scale, mat->display.width, mat->display.height);
-                iso_projection(&x3, &y3, z3);
-
-                draw_line(img, x, y, x3, y3, 0x00FFFFFF);
-            }
-            j++;
-        }
-        i++;
-    }
+	// Applica la proiezione isometrica
+	*x = (prev_x - prev_y) * cos(0.523599);  // 0.523599 radianti = 30 gradi
+	*y = ((prev_x + prev_y) * sin(0.523599)) - z;
 }
 
-
-
-
-
-
-
-
-
-
-int main(void)
+void create_imagine(t_mat *mat, t_image img)
 {
-    void *mlx;
-    void *mlx_win;
-    t_image img;
-    t_mat mat;
+	int i = 0;
+	int j;
 
-    // Parsing della matrice (carica i dati della mappa da un file o altra fonte)
-    parsing(&mat);
-    print_mat(mat);
+	while (mat->mat[i])
+	{
+		j = 0;
+		while (j < mat->x)
+		{
+			int x = j * 30; // La scala del punto
+			int y = i * 30; // La scala del punto
+			int z = mat->mat[i][j]; // Altitudine o valore del punto 3D
 
-    // Inizializzazione di mlx
-    mlx = mlx_init();
+			// Applica la prospettiva isometrica
+			iso_projection(&x, &y, z);
 
-    // Impostazioni per la finestra e la visualizzazione
-    mat.display.width = 1920;          // Larghezza della finestra
-    mat.display.height = 1080;         // Altezza della finestra
-    mat.display.pixel_size = 30;       // Dimensione di ogni pixel (può essere modificata a piacere)
-    mat.display.projection_type = 1;   // Tipo di proiezione (ad esempio, 1 per isometrica)
+			// Centra i punti nella finestra
+			x += 300;
+			y += 300;
 
-    // Creazione della finestra
-    mlx_win = mlx_new_window(mlx, mat.display.width, mat.display.height, "FDF - 3D Map");
+			// Disegna il punto
+			my_mlx_pixel_put(&img, x, y, 0x00FFFFFF);
 
-    // Creazione dell'immagine
-    img.img = mlx_new_image(mlx, mat.display.width, mat.display.height);
-    img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+			// Collega con il punto a destra
+			if (j + 1 < mat->x)
+			{
+				int x2 = (j + 1) * 30;
+				int y2 = i * 30;
+				int z2 = mat->mat[i][j + 1];
 
-    // Creazione e disegno della mappa
-    create_image(&mat, &img);
+				iso_projection(&x2, &y2, z2);
+				x2 += 300;
+				y2 += 300;
 
-    // Mostra l'immagine nella finestra
-    mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
+				// Disegna la linea tra i punti adiacenti orizzontalmente
+				draw_line(&img, x, y, x2, y2, 0x00FFFFFF);
+			}
 
-    // Avvia il ciclo di eventi
-    mlx_loop(mlx);
+			// Collega con il punto in basso
+			if (mat->mat[i + 1])
+			{
+				int x3 = j * 30;
+				int y3 = (i + 1) * 30;
+				int z3 = mat->mat[i + 1][j];
 
-    return (0);
+				iso_projection(&x3, &y3, z3);
+				x3 += 300;
+				y3 += 300;
+
+				// Disegna la linea tra i punti adiacenti verticalmente
+				draw_line(&img, x, y, x3, y3, 0x00FFFFFF);
+			}
+
+			j++;
+		}
+		i++;
+	}
+}
+
+int	main(void)
+{
+	void		*mlx;
+	void		*win;
+	t_image		img;
+	t_mat		mat;
+
+
+	parsing(&mat);
+	print_mat(mat);
+	// Inizializza MiniLibX
+	mlx = mlx_init();
+	win = mlx_new_window(mlx, 1000, 1000, "FDF");
+
+	// Crea un'immagine vuota
+	img.img = mlx_new_image(mlx, 1000, 1000);
+	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+
+	// Usa create_imagine per disegnare sulla finestra
+	create_imagine(&mat, img);
+
+	// Mostra l'immagine sulla finestra
+	mlx_put_image_to_window(mlx, win, img.img, 0, 0);
+
+	// Loop principale di MiniLibX
+	mlx_loop(mlx);
+
+	return 0;
 }
 

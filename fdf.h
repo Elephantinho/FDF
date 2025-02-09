@@ -11,6 +11,9 @@
 #include "minilibx-linux/mlx_int.h"
 #include <math.h>
 
+
+#define COS_30 0.866
+#define SIN_30 0.5
 // Struttura per la gestione delle informazioni della finestra
 typedef struct s_display
 {
@@ -43,10 +46,9 @@ typedef struct s_mat
 
 void    parsing(t_mat *mat);
 void    print_mat(t_mat mat);
-//void    iso_projection(int *x, int *y, int z, int width, int height, t_mat *mat);
+//void    iso_projection(int *x, int *y, int z, t_display *display);
 void    create_image(t_mat *mat, t_image *img);
 void    my_mlx_pixel_put(t_image *data, int x, int y, int color);
-void    draw_line(t_image *img, int x1, int y1, int x2, int y2, int color);
-
+//void    draw_line(t_image *img, int x1, int y1, int x2, int y2, int color);
 #endif
 
