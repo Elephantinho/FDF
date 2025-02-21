@@ -2,7 +2,7 @@
 
 void	free_mat_char(char **mat)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (mat[i])
@@ -15,8 +15,8 @@ void	free_mat_char(char **mat)
 
 void	print_mat(t_mat mat)
 {
-	int		i;
-	int		j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (mat.mat[i])
@@ -35,7 +35,7 @@ void	print_mat(t_mat mat)
 
 int	mat_len(char **tmp)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (tmp[i])
@@ -66,7 +66,7 @@ void	parsing(t_mat *mat)
 	char	**tmp;
 
 	i = 0;
-	fd = open("maps/42.fdf", O_RDONLY);
+	fd = open("maps/pylone.fdf", O_RDONLY);
 	mat->mat = malloc(sizeof(char *) * 2);
 	while ((s = get_next_line(fd)))
 	{
