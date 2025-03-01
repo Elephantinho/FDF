@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucasu <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: gnicolo <gnicolo@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/27 14:36:18 by lucasu            #+#    #+#             */
-/*   Updated: 2024/12/03 16:56:39 by lucasu           ###   ########.fr       */
+/*   Created: 2024/11/18 22:31:33 by gnicolo           #+#    #+#             */
+/*   Updated: 2024/11/24 15:01:09 by gnicolo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,26 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i;
 
+	i = 0;
 	if (n == 0)
 		return (0);
-	i = 0;
-	while (i < n && s1[i] && s2[i])
+	while (s1[i] == s2[i] && s1[i] != '\0' && i < n)
 	{
-		if ((unsigned char)s1[i] != (unsigned char)s2[i])
-			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 		i++;
 	}
-	if (i < n)
-		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-	return (0);
+	if (i == n)
+	{
+		return (0);
+	}
+	return ((unsigned char) s1[i] - (unsigned char) s2[i]);
 }
+/*
+int main()
+{
+	char *s1 = "gug fu";
+	char *s2 = "gugu";
+	unsigned int g = 0;
+	int p = ft_strncmp(s1,s2, g);
+	printf("%d\n",p);
+}
+*/

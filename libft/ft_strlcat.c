@@ -3,38 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucasu <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: gnicolo <gnicolo@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/26 15:40:07 by lucasu            #+#    #+#             */
-/*   Updated: 2024/12/03 16:52:59 by lucasu           ###   ########.fr       */
+/*   Created: 2024/11/20 18:02:47 by gnicolo           #+#    #+#             */
+/*   Updated: 2024/11/26 18:09:07 by gnicolo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_strnlen(const char *s, size_t maxlen)
+size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
-	size_t	i;
+	size_t			d_len;
+	size_t			s_len;
+	unsigned int	d;
+	unsigned int	s;
 
-	i = 0;
-	while (s[i] && i < maxlen)
+	s_len = ft_strlen(src);
+	d_len = ft_strlen(dst);
+	if (size <= d_len)
+		return (size + s_len);
+	d = d_len;
+	s = 0;
+	while (src[s] && d + 1 < size)
 	{
-		i++;
+		dst[d] = src[s];
+		d++;
+		s++;
 	}
-	return (i);
-}
-
-size_t	ft_strlcat(char *dest, const char *src, size_t size)
-{
-	size_t	l;
-
-	l = ft_strnlen(dest, size);
-	if (l == size)
-	{
-		return (l + ft_strlen(src));
-	}
-	else
-	{
-		return (l + ft_strlcpy(dest + l, src, size - l));
-	}
+	dst[d] = '\0';
+	return (d_len + s_len);
 }

@@ -3,82 +3,74 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucasu <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: gnicolo <gnicolo@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/03 16:35:34 by lucasu            #+#    #+#             */
-/*   Updated: 2024/12/03 16:36:25 by lucasu           ###   ########.fr       */
+/*   Created: 2024/11/23 11:32:24 by gnicolo           #+#    #+#             */
+/*   Updated: 2024/11/28 12:48:36 by gnicolo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_len(long int n)
+static void	ft_putninstr(int n, int len, char *str)
 {
-	int	len;
-
-	len = 0;
-	while (n != 0)
+	if (n < 0)
 	{
-		n /= 10;
-		len++;
+		n = -n;
 	}
-	return (len);
+	if (n >= 0)
+	{
+		while (n >= 0 && len >= 0)
+		{
+			str[len] = n % 10 + 48;
+			n = n / 10;
+			len --;
+		}
+	}
 }
 
-char	*ft_itoa2(long int n, int len, int neg)
+static int	ft_superlen(int n)
 {
-	char	*res;
+	int	i;
 
-	res = malloc(len + 1);
-	res[len] = '\0';
-	len--;
-	if (neg)
+	i = 0;
+	if (n <= 0)
 	{
-		res[0] = '-';
-		while (len > 0)
-		{
-			res[len] = (n % 10) + 48;
-			n /= 10;
-			len--;
-		}
+		i = 1;
+		if (n == 0)
+			return (i);
+		n = -n;
 	}
-	else
+	while (n != 0)
 	{
-		while (len >= 0)
-		{
-			res[len] = (n % 10) + 48;
-			n /= 10;
-			len--;
-		}
+		n = n / 10;
+		i++;
 	}
-	return (res);
+	return (i);
 }
 
 char	*ft_itoa(int n)
 {
-	char	*res;
-	int		neg;
+	char	*str;
 	int		len;
-	long	temp;
 
-	neg = 0;
-	temp = n;
-	if (n == 0)
+	len = ft_superlen(n);
+	str = ft_calloc(sizeof(char), (len + 1));
+	if (str == NULL)
+		return (NULL);
+	if (n == -2147483648)
 	{
-		res = malloc(2);
-		res[0] = '0';
-		res[1] = '\0';
+		ft_strlcpy(str, "-2147483648", 12);
+		return (str);
 	}
-	else
-	{
-		len = ft_len(temp);
-		if (n < 0)
-		{
-			neg = 1;
-			temp *= -1;
-			len++;
-		}
-		res = ft_itoa2(temp, len, neg);
-	}
-	return (res);
+	ft_putninstr(n, len - 1, str);
+	if (n < 0)
+		str[0] = '-';
+	return (str);
 }
+/*int main (void)
+{
+	char *str = ft_itoa(-2147483648);
+	printf("I%s\n", str);
+	//free (str);
+}*/

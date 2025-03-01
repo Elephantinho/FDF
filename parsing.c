@@ -1,92 +1,76 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mshahein <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/27 16:42:52 by gnicolo           #+#    #+#             */
+/*   Updated: 2025/03/01 11:52:47 by mshahein         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
-void	free_mat_char(char **mat)
-{
-	int	i;
-
-	i = 0;
-	while (mat[i])
-	{
-		free(mat[i]);
-		i++;
-	}
-	free(mat);
-}
-
-void	print_mat(t_mat mat)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (mat.mat[i])
-	{
-		j = 0;
-		while (j < mat.x)
-		{
-			printf("%d", mat.mat[i][j]);
-			printf(" ");
-			j++;
-		}
-		printf("\n");
-		i++;
-	}
-}
-
-int	mat_len(char **tmp)
-{
-	int	i;
-
-	i = 0;
-	while (tmp[i])
-		i++;
-	return (i);
-}
-
-int	*fun(char **tmp, int size)
+int	*char_int(char **tmp, int size)
 {
 	int		i;
 	int		*res;
 
-	res = malloc(sizeof(int *) * size);
+	res = malloc(sizeof(int) * size);
 	i = 0;
 	while (tmp[i])
 	{
-		res[i] = atoi(tmp[i]);
+		res[i] = ft_atoi(tmp[i]);
 		i++;
 	}
 	return (res);
 }
 
-void	parsing(t_mat *mat)
+void	*ft_realloc(void *ptr, size_t size_old, size_t size_new)
+{
+	void	*new_data;
+
+	new_data = NULL;
+	if (size_new)
+	{
+		if (!ptr)
+			return (ft_calloc(1, size_new));
+		new_data = ft_calloc(1, size_new);
+		if (new_data)
+		{
+			ft_memcpy(new_data, ptr, size_old);
+			free(ptr);
+		}
+	}
+	return (new_data);
+}
+
+void	parsing(t_mat *mat, char *filename)
 {
 	int		fd;
 	char	*s;
 	int		i;
 	char	**tmp;
+	int		new_size;
 
 	i = 0;
-	fd = open("maps/pylone.fdf", O_RDONLY);
-	mat->mat = malloc(sizeof(char *) * 2);
-	while ((s = get_next_line(fd)))
+	check_name(filename);
+	ft_check_nbr_col(filename);
+	fd = open(filename, O_RDONLY);
+	mat->mat = ft_calloc(sizeof(int *), 1);
+	s = get_next_line(fd);
+	while (s)
 	{
-		if (i > 0)
-			mat->mat = realloc(mat->mat, sizeof(int *) * (i + 2));
+		new_size = sizeof(int *) * (i + 2);
+		mat->mat = ft_realloc(mat->mat, sizeof(int *) * (i), new_size);
 		tmp = ft_split(s, ' ');
 		mat->x = mat_len(tmp);
-		mat->mat[i] = fun(tmp, mat->x);
+		mat->mat[i] = char_int(tmp, mat->x);
+		free_char_matrix(tmp);
+		free(s);
+		s = get_next_line(fd);
 		i++;
 	}
 	mat->mat[i] = NULL;
 }
-
-/*
-int	main()
-{
-	//char	**mat;
-	t_mat	mat;
-
-	parsing(&mat);
-	print_mat(mat);
-}
-*/

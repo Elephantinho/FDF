@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucasu <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: gnicolo <gnicolo@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/03 16:15:07 by lucasu            #+#    #+#             */
-/*   Updated: 2024/12/03 16:15:50 by lucasu           ###   ########.fr       */
+/*   Created: 2024/11/19 10:48:54 by gnicolo           #+#    #+#             */
+/*   Updated: 2024/11/25 13:35:20 by gnicolo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,24 @@
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
-	void	*res;
+	void	*s;
 
-	res = malloc(nmemb * size);
-	if (!res)
+	s = malloc(size * nmemb);
+	if (s == NULL)
 		return (NULL);
-	ft_bzero(res, nmemb * size);
-	return (res);
+	ft_bzero(s, (size * nmemb));
+	return (s);
 }
+/*
+int main(void)
+{
+	char *tmp = "ciao negri";
+
+	char *string;
+	printf("%p\n", string);
+	string = ft_calloc(sizeof(int), strlen(tmp));
+	//string = "fanculo";
+	printf("%p\n", string);
+	return (0);
+}
+*/

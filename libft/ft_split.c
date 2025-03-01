@@ -3,124 +3,96 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pdessant <pdessant@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gnicolo <gnicolo@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/23 11:58:31 by pdessant          #+#    #+#             */
-/*   Updated: 2025/02/04 17:26:54 by lucasu           ###   ########.fr       */
+/*   Created: 2024/11/20 18:27:49 by gnicolo           #+#    #+#             */
+/*   Updated: 2024/11/28 12:52:23 by gnicolo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	charset_checker(char c, char ch)
+static int	ft_count(char const *s, char c)
 {
-	if (ch == c)
-		return (1);
-	return (0);
+	int	i;
+	int	s_num;
+
+	i = 0;
+	s_num = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] != c)
+		{
+			s_num++;
+			while (s[i] != c && s[i] != '\0')
+				i++;
+		}
+		if (s[i] != '\0')
+			i++;
+	}
+	return (s_num);
 }
 
-void	portion(const char *str, char c, int counter, char *buff)
+static size_t	ft_superlen(const char *s, char c)
 {
-	int	flag;
 	int	i;
-	int	j;
 
-	flag = 0;
 	i = 0;
-	j = 0;
-	while (str[i] && counter > 0)
+	while (s[i] != c && s[i] != '\0')
 	{
-		if (charset_checker(str[i], c) == 0)
-		{
-			if (counter == 1)
-				buff[j++] = str[i];
-			flag = 1;
-		}
-		else if (flag == 1)
-		{
-			counter--;
-			flag = 0;
-		}
 		i++;
 	}
-	buff[j] = '\0';
+	return (i);
 }
 
-int	ft_str_counter(const char *str, char c)
+char	**malloc_bigerror(char **str)
 {
-	int	counter;
-	int	flag;
-	int	i;
+	size_t	i;
 
-	counter = 0;
-	flag = 0;
 	i = 0;
 	while (str[i])
 	{
-		if (charset_checker(str[i], c) == 0 && flag == 0)
-		{
-			counter++;
-			flag = 1;
-		}
-		else if (charset_checker(str[i], c) == 1)
-			flag = 0;
+		free(str[i]);
 		i++;
 	}
-	return (counter);
+	free(str);
+	return (NULL);
 }
 
-void	free_all(char **s)
+char	**main_factory(char **str, int *i, char *s, char c)
 {
-	int	i;
-
-	i = 0;
-	while (s[i])
+	while (s[++i[0]] != '\0')
 	{
-		free(s[i]);
-		i++;
+		if (s[i[0]] != c)
+		{
+			str[i[1]] = ft_substr(s, i[0], ft_superlen(&s[i[0]], c));
+			if (!str[i[1]])
+				return (malloc_bigerror(str));
+			i[0] = i[0] + ft_superlen(&s[i[0]], c);
+			break ;
+		}
 	}
-	free(s);
+	i[1]++;
+	return (str);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split(const char *s, char c)
 {
-	char	buff[500];
-	char	**ar;
-	int		num_words;
-	int		i;
-	int		counter;
+	int		n_str;
+	char	**split;
+	int		i[2];
 
-	i = 0;
-	num_words = ft_str_counter(s, c);
-	ar = (char **)malloc((num_words + 1) * sizeof(char *));
-	if (!ar)
+	i[1] = 0;
+	i[0] = -1;
+	n_str = ft_count(s, c);
+	split = ft_calloc((n_str + 1), sizeof(char *));
+	if (!split)
 		return (NULL);
-	counter = 1;
-	while (i < num_words)
+	while (n_str--)
 	{
-		portion(s, c, counter++, buff);
-		ar[i] = ft_strdup(buff);
-		if (!(ar[i]))
-		{
-			free_all(ar);
+		if (main_factory(split, i, (char *)s, c) == NULL)
 			return (NULL);
-		}
-		i++;
 	}
-	ar[num_words] = NULL;
-	return (ar);
+	split[i[1]] = 0;
+	return (split);
 }
-
-/* int	main()
-{
-	char	s[] = "\0ciao\0sono petra\0come stai?";
-	char	**a = ft_split(s, '\0');
-	int	i = 0;
-	while (a[i])
-	{
-		printf("%s\n", a[i]);
-		i++;
-	}
-	free_all(a);
-	return (0);
-} */

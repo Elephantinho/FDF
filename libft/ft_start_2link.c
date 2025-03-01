@@ -1,33 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_start_2link.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gnicolo <gnicolo@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/20 18:37:26 by gnicolo           #+#    #+#             */
-/*   Updated: 2025/01/17 10:57:45 by gnicolo          ###   ########.fr       */
+/*   Created: 2025/02/14 18:55:48 by gnicolo           #+#    #+#             */
+/*   Updated: 2025/02/24 17:54:13 by gnicolo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strdup(const char *s)
+void	ft_start_2link(t_stack **lst)
 {
-	int		i;
-	char	*s2;
+	t_stack	*current;
 
-	if (!s)
-		return (NULL);
-	i = 0;
-	s2 = (char *)malloc((ft_strlen(s) + 1) * sizeof(char));
-	if (s2 == NULL)
-		return (NULL);
-	while (s[i])
+	current = *lst;
+	while (current)
 	{
-		s2[i] = s[i];
-		i++;
+		if (current->next)
+			current->next->prev = current;
+		current = current->next;
 	}
-	s2[i] = '\0';
-	return (s2);
 }

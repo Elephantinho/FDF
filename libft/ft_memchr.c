@@ -3,30 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucasu <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: gnicolo <gnicolo@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 14:53:35 by lucasu            #+#    #+#             */
-/*   Updated: 2024/12/02 15:54:12 by lucasu           ###   ########.fr       */
+/*   Created: 2024/11/20 10:26:54 by gnicolo           #+#    #+#             */
+/*   Updated: 2024/11/24 14:59:58 by gnicolo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memchr(const void *s, int c, size_t n)
+void	*ft_memchr(const void *str, int value, size_t num)
 {
-	size_t		i;
+	unsigned const char	*dest;
+	unsigned char		val;
+	size_t				i;
 
+	dest = (unsigned const char *) str;
+	val = (unsigned char) value;
 	i = 0;
-	while (i < n && ((unsigned char *)s)[i] != (unsigned char)c)
+	while (i < num)
 	{
+		if (dest[i] == val)
+			return ((char *)(str + i));
 		i++;
 	}
-	if (i < n && ((unsigned char *)s)[i] == (unsigned char)c)
-	{
-		return ((void *)&((unsigned char *)s)[i]);
-	}
-	else
-	{
-		return (NULL);
-	}
+	return (NULL);
 }

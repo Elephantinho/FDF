@@ -3,31 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucasu <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: gnicolo <gnicolo@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/03 16:57:05 by lucasu            #+#    #+#             */
-/*   Updated: 2024/12/03 16:57:37 by lucasu           ###   ########.fr       */
+/*   Created: 2024/11/20 11:19:21 by gnicolo           #+#    #+#             */
+/*   Updated: 2024/11/26 18:20:50 by gnicolo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_memcmp(const void *s1, const void *s2, size_t n)
+int	ft_memcmp(const void *dest, const void *src, size_t len)
 {
-	size_t			i;
-	unsigned char	*mem1;
-	unsigned char	*mem2;
+	unsigned char		*dest1;
+	unsigned char		*src1;
+	unsigned int		i;
 
-	mem1 = (unsigned char *)s1;
-	mem2 = (unsigned char *)s2;
-	i = 0;
-	while (i < n && mem1[i] == mem2[i])
-	{
-		i++;
-	}
-	if (i == n)
-	{
+	if (len == 0)
 		return (0);
-	}
-	return (mem1[i] - mem2[i]);
+	src1 = (unsigned char *)src;
+	dest1 = (unsigned char *)dest;
+	i = 0;
+	while (src1[i] == dest1[i] && i < len - 1)
+		i++;
+	if (i != len)
+		return (dest1[i] - src1[i]);
+	return (0);
 }
